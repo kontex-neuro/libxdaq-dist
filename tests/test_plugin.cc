@@ -6,12 +6,21 @@
 #include <nlohmann/json.hpp>
 #include <ranges>
 
+
+#if defined(_WIN32)
+#include <windows.h>
+#endif
+
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 auto get_plugin_paths()
 {
     const auto plugin_dir = std::filesystem::path(PLUGIN_PATH);
+#if defined(_WIN32)
+    auto res = SetDllDirectoryA(plugin_dir.generic_string().c_str());
+    if (res == 0) throw std::runtime_error("Failed to set DLL directory");
+#endif
     auto plugin_paths =
         fs::directory_iterator(plugin_dir) |
         std::views::filter([=](const fs::directory_entry &entry) {
