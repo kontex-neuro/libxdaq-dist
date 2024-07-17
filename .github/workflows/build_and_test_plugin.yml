@@ -1,0 +1,50 @@
+name: Build and Test Device Manager
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os_arch:
+          [
+            { os: windows-2022, arch: x64 },
+            { os: macos-14, arch: x64 },
+            { os: macos-14, arch: arm64 },
+            { os: ubuntu-22.04, arch: x64 },
+          ]
+
+    runs-on: ${{ matrix.os_arch.os }}
+
+    steps:
+      - name: Install conan
+        run: pip install conan
+
+      - name: conan cache
+        id: conan_cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.conan2
+          key: ${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }}-conan
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Compiler (Windows)
+        uses: ilammy/msvc-dev-cmd@v1
+        if: matrix.os_arch.os == 'windows-2022'
+
+      - name: Setup Compiler and env (Ubuntu 22)
+        if: matrix.os_arch.os == 'ubuntu-22.04'
+        run: |
+          echo "CC=gcc-12" >> $GITHUB_ENV
+          echo "CXX=g++-12" >> $GITHUB_ENV
+
+      - name: Conan create and test package 
+        run: |
+          conan config install .github/conan_profiles/${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }} -tf profiles
+          conan create . --profile:all ${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }} -s build_type=Release --build=missing
+
