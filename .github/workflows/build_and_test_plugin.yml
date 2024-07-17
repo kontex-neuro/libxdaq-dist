@@ -1,0 +1,62 @@
+name: Build and Test Plugin
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os_arch: [
+            { os: windows-2022, arch: x64 },
+            { os: macos-14, arch: x64 },
+            { os: macos-14, arch: arm64 },
+            # { os: ubuntu-22.04, arch: x64 },
+          ]
+
+    runs-on: ${{ matrix.os_arch.os }}
+
+    steps:
+      - name: Install conan
+        run: pip install conan ninja cmake
+
+      - name: conan cache
+        id: conan_cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.conan2
+          key: ${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }}-conan
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Compiler (Windows)
+        uses: ilammy/msvc-dev-cmd@v1
+        if: matrix.os_arch.os == 'windows-2022'
+
+      - name: Setup Compiler (macOS)
+        if: matrix.os_arch.os == 'macos-14'
+        run: |
+          brew install llvm@18
+          echo "/opt/homebrew/opt/llvm@18/bin" >> $GITHUB_PATH
+          echo "CC=/opt/homebrew/opt/llvm@18/bin/clang" >> $GITHUB_ENV
+          echo "CXX=/opt/homebrew/opt/llvm@18/bin/clang++" >> $GITHUB_ENV
+
+      - name: Conan install
+        run: |
+          conan config install .github/conan_profiles/${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }} -tf profiles
+          conan install . --build missing --output-folder build --profile:all ${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }}
+
+      - name: CMake configure
+        run: |
+          cmake -S . -B build --preset conan-default -Dxdaq_DIR=libxdaq/${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }}/lib/cmake/xdaq
+
+      - name: Build
+        run: |
+          cmake --build build --preset conan-release
+
+      - name: Run tests
+        run: |
+          cmake --build build --preset conan-release --target test
