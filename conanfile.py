@@ -14,6 +14,10 @@ class libxdaq(ConanFile):
         self.requires("spdlog/1.13.0")
         self.requires("catch2/3.5.0")
 
+    def configure(self):
+        self.options["boost/*"].with_stacktrace_backtrace = False
+        self.options["boost/*"].without_locale = True
+
     def generate(self):
         tc = CMakeToolchain(self)
         # tc.user_presets_path = False
