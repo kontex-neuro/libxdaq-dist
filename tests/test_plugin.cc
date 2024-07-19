@@ -4,7 +4,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <filesystem>
 #include <nlohmann/json.hpp>
-#include <ranges>
 
 
 #if defined(_WIN32)
@@ -21,15 +20,12 @@ auto get_plugin_paths()
     auto res = SetDllDirectoryA(plugin_dir.generic_string().c_str());
     if (res == 0) throw std::runtime_error("Failed to set DLL directory");
 #endif
-    auto plugin_paths =
-        fs::directory_iterator(plugin_dir) |
-        std::views::filter([=](const fs::directory_entry &entry) {
-            if (fs::is_directory(entry)) return false;
-            if (!entry.path().filename().generic_string().contains("device_plugin")) return false;
-            return true;
-        }) |
-        std::views::transform([](auto ent) { return fs::canonical(fs::path(ent)); }) |
-        std::ranges::to<std::vector>();
+    std::vector<fs::path> plugin_paths;
+    for (const auto &entry : fs::directory_iterator(plugin_dir)) {
+        if (fs::is_directory(entry)) continue;
+        if (!entry.path().filename().generic_string().contains("device_plugin")) continue;
+        plugin_paths.push_back(fs::canonical(entry.path()));
+    }
     // remove duplicates
     std::ranges::sort(plugin_paths);
     plugin_paths.erase(std::unique(plugin_paths.begin(), plugin_paths.end()), plugin_paths.end());

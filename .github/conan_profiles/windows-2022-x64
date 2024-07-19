@@ -7,4 +7,4 @@ compiler.runtime=dynamic
 compiler.version=194
 os=Windows
 [conf]
-tools.cmake.cmaketoolchain:generator=Ninja Multi-Config
+tools.cmake.cmaketoolchain:generator=Ninja

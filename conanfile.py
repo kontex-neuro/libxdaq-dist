@@ -17,6 +17,7 @@ class libxdaq(ConanFile):
     def configure(self):
         self.options["boost/*"].with_stacktrace_backtrace = False
         self.options["boost/*"].without_locale = True
+        self.options["boost/*"].without_stacktrace = True
 
     def generate(self):
         tc = CMakeToolchain(self)

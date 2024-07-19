@@ -7,4 +7,4 @@ compiler.libcxx=libc++
 compiler.version=18
 os=Macos
 [conf]
-tools.cmake.cmaketoolchain:generator=Ninja Multi-Config
+tools.cmake.cmaketoolchain:generator=Ninja
