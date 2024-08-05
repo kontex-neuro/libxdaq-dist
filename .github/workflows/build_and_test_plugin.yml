@@ -50,21 +50,11 @@ jobs:
         run: |
           echo "CC=gcc-12" >> $GITHUB_ENV
           echo "CXX=g++-12" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=$PWD/libxdaq/${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }}/lib/xdaq/plugin:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=$PWD/libxdaq/linux/x86_64/lib/xdaq/plugin:$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
-      - name: Conan install
+      - name: Conan export package and test
         run: |
           conan config install .github/conan_profiles/${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }} -tf profiles
-          conan install . --build missing --output-folder build --profile:all ${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }}
+          conan install . --build missing --profile:all ${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }}
+          conan export-pkg . --profile:all ${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }}
 
-      - name: CMake configure
-        run: |
-          cmake -S . -B build --preset conan-release -Dxdaq_DIR=libxdaq/${{ matrix.os_arch.os }}-${{ matrix.os_arch.arch }}/lib/cmake/xdaq
-
-      - name: Build
-        run: |
-          cmake --build build --preset conan-release
-
-      - name: Run tests
-        run: |
-          cmake --build build --preset conan-release --target test

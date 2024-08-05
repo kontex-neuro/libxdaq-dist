@@ -1,5 +1,6 @@
 /.cache
 /.venv
 /build/*
-/CMakeUserPresets.json
+/test_package/build/*
+CMakeUserPresets.json
 /*.sh
