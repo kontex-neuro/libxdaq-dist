@@ -12,16 +12,22 @@ jobs:
         os_arch:
           [
             { os: windows-2022, arch: x64 },
-            { os: macos-14, arch: x64 },
-            { os: macos-14, arch: arm64 },
-            { os: ubuntu-22.04, arch: x64 },
+            { os: macos-15, arch: arm64 },
+            { os: ubuntu-24.04, arch: x64 },
           ]
 
     runs-on: ${{ matrix.os_arch.os }}
 
     steps:
-      - name: Install conan
-        run: pip install conan
+      - name: Install build system (ubuntu)
+        if: matrix.os_arch.os == 'ubuntu-24.04'
+        run: |
+          sudo apt-get install -y pipx
+          pipx install conan ninja
+
+      - name: Install build system (windows-2022, macos-15)
+        if: matrix.os_arch.os == 'windows-2022' || matrix.os_arch.os == 'macos-15'
+        run: pip install conan ninja
 
       - name: conan cache
         id: conan_cache
@@ -37,11 +43,13 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         if: matrix.os_arch.os == 'windows-2022'
 
-      - name: Setup Compiler and env (Ubuntu 22)
-        if: matrix.os_arch.os == 'ubuntu-22.04'
+      - name: Setup Compiler (MacOS)
+        if: matrix.os_arch.os == 'macos-15'
         run: |
-          echo "CC=gcc-12" >> $GITHUB_ENV
-          echo "CXX=g++-12" >> $GITHUB_ENV
+          echo "CC=$(brew --prefix llvm@18)/bin/clang" >> $GITHUB_ENV
+          echo "CXX=$(brew --prefix llvm@18)/bin/clang++" >> $GITHUB_ENV
+          echo "LDFLAGS=-L$(brew --prefix llvm@18)/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I$(brew --prefix llvm@18)/include" >> $GITHUB_ENV
 
       - name: Conan create and test package 
         run: |
