@@ -13,6 +13,7 @@ jobs:
           [
             { os: windows-2022, arch: x64 },
             { os: macos-15, arch: arm64 },
+            { os: macos-15, arch: x64 },
             { os: ubuntu-24.04, arch: x64 },
           ]
 
@@ -48,8 +49,6 @@ jobs:
         run: |
           echo "CC=$(brew --prefix llvm@18)/bin/clang" >> $GITHUB_ENV
           echo "CXX=$(brew --prefix llvm@18)/bin/clang++" >> $GITHUB_ENV
-          echo "LDFLAGS=-L$(brew --prefix llvm@18)/lib" >> $GITHUB_ENV
-          echo "CPPFLAGS=-I$(brew --prefix llvm@18)/include" >> $GITHUB_ENV
 
       - name: Conan create and test package 
         run: |
