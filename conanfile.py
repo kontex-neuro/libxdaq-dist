@@ -5,7 +5,7 @@ from conan.tools.files import get, copy
 
 class libxdaq(ConanFile):
     name = "libxdaq"
-    version = "0.2.4"
+    version = "0.2.5"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
 
