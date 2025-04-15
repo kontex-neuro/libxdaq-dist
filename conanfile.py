@@ -5,7 +5,7 @@ from conan.tools.files import get, copy
 
 class libxdaq(ConanFile):
     name = "libxdaq"
-    version = "0.2.6"
+    version = "0.2.7"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
 
@@ -64,9 +64,3 @@ class libxdaq(ConanFile):
         self.cpp_info.builddirs.append(str(Path("lib", "cmake", "xdaq")))
         self.cpp_info.builddirs.append(str(Path("lib", "cmake", "nontype_functional")))
         self.cpp_info.builddirs.append(str(Path("lib", "cmake", "readerwriterqueue")))
-
-        if self.settings.os == "Linux":
-            self.runenv_info.define(
-                "LD_LIBRARY_PATH",
-                f'$LD_LIBRARY_PATH;{str(Path(self.package_folder, "lib/xdaq/managers"))}'
-            )
