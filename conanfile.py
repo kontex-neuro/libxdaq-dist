@@ -5,7 +5,7 @@ from conan.tools.files import get, copy
 
 class libxdaq(ConanFile):
     name = "libxdaq"
-    version = "0.2.7"
+    version = "0.2.8"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
 
@@ -59,7 +59,7 @@ class libxdaq(ConanFile):
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "none")
         self.cpp_info.libs = ["xdaq_device"]
-        self.cpp_info.includedirs = ["include/xdaq"]
+        self.cpp_info.includedirs = ["include", "include/xdaq"]
         self.cpp_info.libdirs = ["lib/xdaq", "lib/xdaq/devices"]
         self.cpp_info.builddirs.append(str(Path("lib", "cmake", "xdaq")))
         self.cpp_info.builddirs.append(str(Path("lib", "cmake", "nontype_functional")))
