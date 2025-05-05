@@ -5,7 +5,7 @@ from conan.tools.files import get, copy
 
 class libxdaq(ConanFile):
     name = "libxdaq"
-    version = "0.2.8"
+    version = "0.3.0"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
 
@@ -41,11 +41,11 @@ class libxdaq(ConanFile):
             setattr(self.options["boost/*"], f"without_{opt}", True)
 
     def build(self):
-        base_url = "https://github.com/kontex-neuro/libxdaq-dist/releases/download"
+        base_url = "https://xdaq.sgp1.cdn.digitaloceanspaces.com/libxdaq"
 
         _os = str(self.settings.os).lower()
         _arch = str(self.settings.arch).lower()
-        url = f"{base_url}/{self.version}/{_os}-{_arch}.zip"
+        url = f"{base_url}/{_os}-{_arch}-{self.version}.zip"
         get(self, url, strip_root=True)
 
     def package(self):
