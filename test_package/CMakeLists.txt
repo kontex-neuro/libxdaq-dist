@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.26)
 
 project(libxdaq-dist)
 
+if(MSVC)
+    add_compile_definitions(NOMINMAX)
+endif()
+
 find_package(Catch2 REQUIRED)
 find_package(xdaq REQUIRED)
 find_package(nlohmann_json REQUIRED)
