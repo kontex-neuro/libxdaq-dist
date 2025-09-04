@@ -5,40 +5,19 @@ from conan.tools.files import get, copy
 
 class libxdaq(ConanFile):
     name = "libxdaq"
-    version = "0.4.2"
+    version = "0.5.0"
     settings = "os", "compiler", "build_type", "arch"
     build_policy = "missing"
 
     def build_requirements(self):
-        self.requires("catch2/3.5.0")
         self.tool_requires("cmake/[>=3.25.0 <3.30.0]")
 
     def requirements(self):
-        self.requires("boost/1.81.0")
-        self.requires("zlib/1.3.1")
         self.requires("fmt/10.2.1")
-        self.requires("nlohmann_json/3.11.3")
         self.requires("spdlog/1.13.0")
 
     def configure(self):
-        # Enable required Boost modules
-        self.options["boost/*"].with_atomic = True
-        self.options["boost/*"].with_system = True
-        self.options["boost/*"].with_filesystem = True
-        self.options["boost/*"].with_program_options = True
-        # Configure Boost options for GitHub Actions build
-        self.options["boost/*"].with_stacktrace_backtrace = False
-        self.options["boost/*"].without_stacktrace = True
-        self.options["boost/*"].without_locale = True
-        # List of Boost modules to disable for faster build speed
-        disable_for_build_speed = (
-            "charconv", "chrono", "cobalt", "container", "context", "contract", "coroutine",
-            "date_time", "exception", "fiber", "graph", "graph_parallel", "iostreams", "json",
-            "log", "math", "mpi", "nowide", "python", "random", "regex", "serialization", "test",
-            "thread", "timer", "type_erasure", "url", "wave"
-        )
-        for opt in disable_for_build_speed:
-            setattr(self.options["boost/*"], f"without_{opt}", True)
+        pass
 
     def build(self):
         base_url = "https://xdaq.sgp1.cdn.digitaloceanspaces.com/libxdaq"
