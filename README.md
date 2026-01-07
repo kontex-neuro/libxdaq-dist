@@ -1,3 +1,28 @@
+# ⚠️ DEPRECATED
+
+**This repository is deprecated and no longer maintained.**
+
+Please migrate to our centralized Conan index: [kontex-conan](https://github.com/kontex-neuro/kontex-conan)
+
+## Migration Instructions
+
+```bash
+git clone https://github.com/kontex-neuro/kontex-conan.git kontex-conan
+conan remote add --force kontex-neuro ./kontex-conan
+```
+
+Then use `libxdaq` directly from the `kontex-neuro` remote instead of this repository.
+
+## Projects Using kontex-conan
+
+The following projects have migrated to using the local Conan index instead of this deprecated repository:
+* [XDAQ-OE](https://github.com/kontex-neuro/XDAQ-OE)
+* [XDAQ-Neuropixels](https://github.com/kontex-neuro/XDAQ-Neuropixels)
+* [pylibxdaq](https://github.com/kontex-neuro/pylibxdaq)
+* [Intan-RHX](https://github.com/kontex-neuro/Intan-RHX)
+
+---
+
 # libxdaq
 
 `libxdaq` is a C++ interface library for interacting with XDAQ hardware devices. This repository provides precompiled binary distributions for multiple platforms.
@@ -50,9 +75,3 @@ target_link_libraries(your_target PRIVATE xdaq::xdaq_device)
 ## Documentation
 
 API documentation and setup guides will be added in a future update.
-
-## Related Projects
-
-* [XDAQ-OE](https://github.com/kontex-neuro/XDAQ-OE) — Open Ephys plugin using libxdaq
-* [Intan-RHX](https://github.com/kontex-neuro/Intan-RHX) — RHX fork with libxdaq support
-* [pylibxdaq](https://github.com/kontex-neuro/pylibxdaq) — Python interface for XDAQ
